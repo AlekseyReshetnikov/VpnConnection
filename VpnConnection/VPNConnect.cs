@@ -86,7 +86,14 @@ pause";
             //F.Show();
             bool focused = F.txtVPNName.Focus();
             DialogResult r = F.ShowDialog();
-            if (r == DialogResult.OK) { SaveSettings(); }
+            if (r == DialogResult.OK) {
+                vpnName = F.txtVPNName.Text;
+                vpnUser = F.txtVpnUser.Text;
+                vpnPwd = F.txtPwd.Text;
+                ipMask = F.txtVpnMask.Text;
+
+                SaveSettings();
+            }
         }
 
         public void rasdial()
@@ -207,9 +214,16 @@ pause";
         string Unprotect(string data)
         {
             byte[] ProtData = Convert.FromBase64String(data);
-            byte[] ClearBytes = ProtectedData.Unprotect(ProtData, null, DataProtectionScope.LocalMachine);
-            string s =Encoding.UTF8.GetString(ClearBytes);
-            return s;
+            try
+            {
+                byte[] ClearBytes = ProtectedData.Unprotect(ProtData, null, DataProtectionScope.LocalMachine);
+                string s = Encoding.UTF8.GetString(ClearBytes);
+                return s;
+            }
+            catch
+            {
+                return "";
+            }
         }
 
         public class AXMLNode
