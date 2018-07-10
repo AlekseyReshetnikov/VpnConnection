@@ -30,11 +30,12 @@
         {
             this.btnParam = new System.Windows.Forms.Button();
             this.btnVpnConnect = new System.Windows.Forms.Button();
+            this.cmbItems = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // btnParam
             // 
-            this.btnParam.Location = new System.Drawing.Point(32, 12);
+            this.btnParam.Location = new System.Drawing.Point(32, 58);
             this.btnParam.Name = "btnParam";
             this.btnParam.Size = new System.Drawing.Size(229, 23);
             this.btnParam.TabIndex = 2;
@@ -44,7 +45,7 @@
             // 
             // btnVpnConnect
             // 
-            this.btnVpnConnect.Location = new System.Drawing.Point(32, 51);
+            this.btnVpnConnect.Location = new System.Drawing.Point(32, 99);
             this.btnVpnConnect.Name = "btnVpnConnect";
             this.btnVpnConnect.Size = new System.Drawing.Size(229, 23);
             this.btnVpnConnect.TabIndex = 3;
@@ -52,15 +53,25 @@
             this.btnVpnConnect.UseVisualStyleBackColor = true;
             this.btnVpnConnect.Click += new System.EventHandler(this.btnVpnConnect_Click);
             // 
+            // cmbItems
+            // 
+            this.cmbItems.FormattingEnabled = true;
+            this.cmbItems.Location = new System.Drawing.Point(12, 12);
+            this.cmbItems.Name = "cmbItems";
+            this.cmbItems.Size = new System.Drawing.Size(254, 21);
+            this.cmbItems.TabIndex = 1;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(298, 109);
+            this.ClientSize = new System.Drawing.Size(298, 134);
+            this.Controls.Add(this.cmbItems);
             this.Controls.Add(this.btnVpnConnect);
             this.Controls.Add(this.btnParam);
             this.Name = "MainForm";
             this.Text = "Подключение VPN";
+            this.Load += new System.EventHandler(this.MainForm_Load);
             this.ResumeLayout(false);
 
         }
@@ -68,6 +79,7 @@
         #endregion
         private System.Windows.Forms.Button btnParam;
         private System.Windows.Forms.Button btnVpnConnect;
+        private System.Windows.Forms.ComboBox cmbItems;
     }
 }
 

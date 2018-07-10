@@ -12,12 +12,23 @@ namespace ARvpn
 {
     class VPNConnect
     {
-        public string ipMask= "192.168.248.";
-        public string vpnIP;
-        public string vpnName;
-        public string vpnUser;
-        public void SetVpnPwd(string p) { vpnPwd = p; }
-        private string vpnPwd;
+        public class VpnItem
+        {
+            public string ipMask = "192.168.248.";
+            public string vpnIP;
+            public string vpnName;
+            public string vpnUser;
+            public void SetVpnPwd(string p) { vpnPwd = p; }
+            internal string vpnPwd;
+        }
+
+        public VpnItem CurrentVpn =null;
+        public Dictionary< string, VpnItem> VpnDict;
+        public VPNConnect(){
+            VpnDict = new Dictionary<string, VpnItem>();
+            CurrentVpn = new VpnItem();
+            }
+
         public string SettingsPath;
         public string getVpnIP()
         {
@@ -28,9 +39,9 @@ namespace ARvpn
             foreach (IPAddress a in al)
             {
                 string si = a.ToString();
-                if (si.StartsWith(ipMask)) { svn = si; }
+                if (si.StartsWith(CurrentVpn.ipMask)) { svn = si; }
             }
-            vpnIP = svn;
+            CurrentVpn.vpnIP = svn;
             return svn;
         }
 
@@ -71,34 +82,48 @@ pause";
 
         public void init()
         {
-            ipMask = "192.168.248.";
-            vpnName = "VPN-подключение";
-            vpnUser = "aresh@norma.com";
+            CurrentVpn.ipMask = "192.168.248.";
+            CurrentVpn.vpnName = "VPN-подключение";
+            CurrentVpn.vpnUser = "aresh@norma.com";
         }
 
-        internal void ShowParam()
+        internal bool ShowParam()
         {
+            bool res = false;
             FormParam F = new ARvpn.FormParam();
-            F.txtVPNName.Text = vpnName;
-            F.txtVpnUser.Text = vpnUser;
-            F.txtPwd.Text = vpnPwd;
-            F.txtVpnMask.Text = ipMask;
+            F.txtVPNName.Text = CurrentVpn.vpnName;
+            F.txtVpnUser.Text = CurrentVpn.vpnUser;
+            F.txtPwd.Text = CurrentVpn.vpnPwd;
+            F.txtVpnMask.Text = CurrentVpn.ipMask;
             //F.Show();
             bool focused = F.txtVPNName.Focus();
             DialogResult r = F.ShowDialog();
             if (r == DialogResult.OK) {
-                vpnName = F.txtVPNName.Text;
-                vpnUser = F.txtVpnUser.Text;
-                vpnPwd = F.txtPwd.Text;
-                ipMask = F.txtVpnMask.Text;
+                bool newItem = !VpnDict.ContainsKey(CurrentVpn.vpnName);
+                CurrentVpn.vpnName = F.txtVPNName.Text;
+                CurrentVpn.vpnUser = F.txtVpnUser.Text;
+                CurrentVpn.vpnPwd = F.txtPwd.Text;
+                CurrentVpn.ipMask = F.txtVpnMask.Text;
+                if (newItem)
+                {
+                    if (VpnDict.ContainsKey(CurrentVpn.vpnName)) {
+                        VpnDict[CurrentVpn.vpnName] = CurrentVpn;
+                    }
+                    else
+                    {
+                        VpnDict.Add(CurrentVpn.vpnName, CurrentVpn);
+                    }
+                    res = true;
+                }
 
                 SaveSettings();
             }
+            return res;
         }
 
         public void rasdial()
         {
-            string s = string.Format("{0} {1} {2}", vpnName, vpnUser, vpnPwd);
+            string s = string.Format("{0} {1} {2}", CurrentVpn.vpnName, CurrentVpn.vpnUser, CurrentVpn.vpnPwd);
             Process p = System.Diagnostics.Process.Start("rasdial.exe",  s); //VPNConnectionName VPNUsername VPNPassword
             p.WaitForExit();
         }
@@ -117,7 +142,7 @@ pause";
                 catch { F = false; }
             }
             if (!F) { D.LoadXml(@"<?xml version=""1.0"" encoding=""windows-1251""?><Option/>"); }
-            XmlNodeList Ns = D.DocumentElement.ChildNodes;
+            /*XmlNodeList Ns = D.DocumentElement.ChildNodes;
             XmlNode N;
             if (Ns.Count == 0)
             {
@@ -126,11 +151,36 @@ pause";
             }
             else { N = Ns[0]; }
             SaveParam(D, N);
+            */
+            XmlNode vpnNode = D.DocumentElement.SelectSingleNode("vpnConnect");
+            if (vpnNode == null)
+            {
+                vpnNode = D.CreateElement("vpnConnect");
+                D.DocumentElement.AppendChild(vpnNode);
+            }
+            else
+            {
+                vpnNode.RemoveAll();
+            }
+            VpnItem save = CurrentVpn;
+            foreach(VpnItem item in VpnDict.Values)
+            {
+                CurrentVpn = item;
+                XmlNode N = D.CreateElement("item");
+                SaveParam(D, N);
+                vpnNode.AppendChild(N);
+            }
+            CurrentVpn = save;
+            var A = D.CreateAttribute("Current");
+            A.Value = save.vpnName;
+            vpnNode.Attributes.SetNamedItem(A);
             D.Save(SettingsPath);
         }
 
+        public bool SettingsChanged= false;
         public bool LoadSettings(string s1 = "")
         { // Чтение настроечных параметров
+            SettingsChanged = false;
             string s, s2;
             if (s1 == "")
             { s = Application.StartupPath; s += @"\Settings.xml"; }
@@ -154,12 +204,61 @@ pause";
                     if ((s1 == "") && (s2 != "")) { LoadSettings(s2); }
                     else
                     {
-                        LoadParam(new AXMLNode(Ns[0]));
+                        XmlNode vpnNode = D.DocumentElement.SelectSingleNode("vpnConnect");
+                        if (vpnNode != null)
+                        {
+                            XmlNodeList items = vpnNode.SelectNodes("item");
+                            if (items.Count == 0) { vpnNode = null; }
+                        }
+                        if (vpnNode == null)
+                        {
+                            LoadParam(new AXMLNode(Ns[0]));
+                            SettingsChanged = true;
+                            VpnDict.Clear();
+                            VpnDict.Add(CurrentVpn.vpnName, CurrentVpn);
+                        }
+                        else
+                        {
+                            XmlNodeList items = vpnNode.SelectNodes("item");
+                            VpnDict.Clear();
+                            VpnItem first = null;
+                            foreach (XmlNode item in items)
+                            {
+                                CurrentVpn = new VpnItem();
+                                if (first==null) { first = CurrentVpn; }
+                                var aitem = new AXMLNode(item);
+                                LoadParam(aitem);
+                                try
+                                {
+                                    VpnDict.Add(CurrentVpn.vpnName, CurrentVpn);
+                                }
+                                catch { }
+                            }
+                            if (first != null)
+                            {
+                                CurrentVpn = first;
+                            }
+                            try
+                            {
+
+                                string current = (string)vpnNode.Attributes["Current"].Value;
+                                if (VpnDict.TryGetValue(current, out first))
+                                {
+                                    CurrentVpn = first;
+                                }
+
+                            }
+                            catch { }
+                        }
                     }
                 }
             }
             catch (Exception e) { MessageBox.Show(e.Message); }
             D = null;
+            if (SettingsChanged)
+            {
+                SaveSettings();
+            }
             return true;
         }
 
@@ -175,13 +274,13 @@ pause";
             {
                 F = (x) => N[x];
             }
-            vpnName = N["vpnName"];
-            vpnUser = N["vpnUser"];
-            vpnPwd = F("vpnPwd");
-            ipMask = N["ipMask"];
+            CurrentVpn.vpnName = N["vpnName"];
+            CurrentVpn.vpnUser = N["vpnUser"];
+            CurrentVpn.vpnPwd = F("vpnPwd");
+            CurrentVpn.ipMask = N["ipMask"];
             if (!Protected)
             {
-                SaveSettings();
+                SettingsChanged = true;
             }
         }
 
@@ -196,10 +295,10 @@ pause";
             Action<string, string> P;
             P = (n, v) => { string s = v; if (!string.IsNullOrEmpty(s)) { s = sProtected + "!" + Protect(s); } SetItem(n, s);};
             SetItem("Protected","1");
-            SetItem("vpnName",vpnName);
-            SetItem("vpnUser", vpnUser);
-            P("vpnPwd", vpnPwd);
-            SetItem("ipMask", ipMask);
+            SetItem("vpnName", CurrentVpn.vpnName);
+            SetItem("vpnUser", CurrentVpn.vpnUser);
+            P("vpnPwd", CurrentVpn.vpnPwd);
+            SetItem("ipMask", CurrentVpn.ipMask);
         }
 
         string Protect(string data)
