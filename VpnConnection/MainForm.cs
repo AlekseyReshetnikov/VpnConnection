@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -32,13 +33,43 @@ namespace ARvpn
                 VpnConnectAsync();
             }
         }
+        bool VpnConnectTaskExecuting = false;
         async void VpnConnectAsync()
         {
-            await Task.Run(() =>
+            if (VpnConnectTaskExecuting)
             {
-                VpnConnect.rasdial();
-                VpnConnect.routeAdd();
+                ApText0("Уже запущено подключение. Подождите", Color.Red);Apln();
+                return;
+            }
+            prBar.Visible = true;
+            Progress(0, 2);
+            VpnConnectTaskExecuting = true;
+            ApText0( DateTime.Now.ToString()+" ", Color.Black);
+            ApText0("Запускаю подключение...", Color.DarkBlue); Apln();
+            Action<string> mes = (x) => { ApText(x);};
+            Task VpnConnectTask = Task.Run(() =>
+            {
+                try
+                {
+                    try
+                    {
+                        VpnConnect.rasdial();
+                        Progress(1);
+                        this.Invoke(mes,"routeAdd");
+                        VpnConnect.routeAdd();
+                        Progress(2);
+                        this.Invoke(mes, "Подключились");
+                    }
+                    finally
+                    {
+                        VpnConnectTaskExecuting = false;
+                        this.Invoke(new Action(() => { prBar.Visible = false; }));
+
+                    }
+                }
+                catch(Exception E) { this.Invoke(new Action(() => { ApText0(E.Message, Color.Red); })); }
             });
+            await VpnConnectTask;
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -50,6 +81,8 @@ namespace ARvpn
                 VpnConnect.SaveSettings();
             }
             LoadVpns();
+            ApText0(DateTime.Now.ToString()+"  ",Color.DarkTurquoise);
+            ApText("Start");
         }
         private void LoadVpns()
         { 
@@ -72,6 +105,47 @@ namespace ARvpn
             }
             return res;
         }
+
+        public void Progress(int pos, int max = 0)
+        {
+            Action a = () =>
+            {
+                if (pos > prBar.Maximum) pos = prBar.Maximum;
+                prBar.Value = pos;
+                if (max > 0) prBar.Maximum = max;
+            };
+            if (this.InvokeRequired)
+            {
+                this.Invoke(a);
+            }
+            else
+            {
+                a();
+            }
+
+        }
+
+        private void ApText(string txt)
+        {
+            rtxtLog.AppendText(txt);
+            Apln();
+        }
+        private void ApText0(string txt, Color font_color)
+        {
+            var richTextBox1 = rtxtLog;
+            richTextBox1.SelectionStart = richTextBox1.TextLength;
+            richTextBox1.SelectionLength = 0;
+            richTextBox1.SelectionColor = font_color;
+            richTextBox1.AppendText(txt);
+            richTextBox1.SelectionColor = richTextBox1.ForeColor;
+        }
+        private void Apln()
+        {
+            rtxtLog.AppendText("\n");
+            rtxtLog.ScrollToCaret();
+        }
+
+
 
     }
 }
