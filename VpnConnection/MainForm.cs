@@ -159,7 +159,11 @@ namespace ARvpn
             {
                 ApText(VpnConnect.routeAddCmd());
             }
+        }
 
+        private void btnRC_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start(@"mstsc.exe");
         }
     }
 }

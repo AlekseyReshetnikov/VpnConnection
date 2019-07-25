@@ -35,6 +35,7 @@
             this.prBar = new System.Windows.Forms.ProgressBar();
             this.button1 = new System.Windows.Forms.Button();
             this.btnRouteAdd = new System.Windows.Forms.Button();
+            this.btnRC = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnParam
@@ -101,11 +102,22 @@
             this.btnRouteAdd.UseVisualStyleBackColor = true;
             this.btnRouteAdd.Click += new System.EventHandler(this.btnRouteAdd_Click);
             // 
+            // btnRC
+            // 
+            this.btnRC.Location = new System.Drawing.Point(182, 205);
+            this.btnRC.Name = "btnRC";
+            this.btnRC.Size = new System.Drawing.Size(75, 23);
+            this.btnRC.TabIndex = 8;
+            this.btnRC.Text = "RC";
+            this.btnRC.UseVisualStyleBackColor = true;
+            this.btnRC.Click += new System.EventHandler(this.btnRC_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(363, 234);
+            this.Controls.Add(this.btnRC);
             this.Controls.Add(this.btnRouteAdd);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.prBar);
@@ -128,6 +140,7 @@
         private System.Windows.Forms.ProgressBar prBar;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button btnRouteAdd;
+        private System.Windows.Forms.Button btnRC;
     }
 }
 
