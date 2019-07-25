@@ -19,7 +19,7 @@ namespace ARvpn
             if (!SelectItem())
             {
                 string k = cmbItems.Text;
-                VpnConnect.CurrentVpn = new VPNConnect.VpnItem() { vpnName = k };
+                VpnConnect.CurrentVpn = new VpnItem() { vpnName = k };
             }
             if (VpnConnect.ShowParam()) {
                 LoadVpns();
@@ -75,10 +75,10 @@ namespace ARvpn
         private void MainForm_Load(object sender, EventArgs e)
         {
             VpnConnect = new VPNConnect();
-            if (!VpnConnect.LoadSettings())
+            if (!VpnConnect.Settings.LoadSettings())
             {
                 VpnConnect.init();
-                VpnConnect.SaveSettings();
+                VpnConnect.Settings.SaveSettings();
             }
             LoadVpns();
             ApText0(DateTime.Now.ToString()+"  ",Color.DarkTurquoise);
@@ -97,7 +97,7 @@ namespace ARvpn
         {
             string k = (string)cmbItems.SelectedItem;
             if (k == null) { k = cmbItems.Text; }
-            VPNConnect.VpnItem item=null;
+            VpnItem item=null;
             var res = VpnConnect.VpnDict.TryGetValue(k, out item );
             if (res)
             {
@@ -145,7 +145,21 @@ namespace ARvpn
             rtxtLog.ScrollToCaret();
         }
 
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (SelectItem())
+            {
+                ApText( VpnConnect.getVpnIP());
+            }
+        }
 
+        private void btnRouteAdd_Click(object sender, EventArgs e)
+        {
+            if (SelectItem())
+            {
+                ApText(VpnConnect.routeAddCmd());
+            }
 
+        }
     }
 }

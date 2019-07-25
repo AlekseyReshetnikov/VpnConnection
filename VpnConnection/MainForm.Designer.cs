@@ -33,13 +33,15 @@
             this.cmbItems = new System.Windows.Forms.ComboBox();
             this.rtxtLog = new System.Windows.Forms.RichTextBox();
             this.prBar = new System.Windows.Forms.ProgressBar();
+            this.button1 = new System.Windows.Forms.Button();
+            this.btnRouteAdd = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnParam
             // 
             this.btnParam.Location = new System.Drawing.Point(12, 39);
             this.btnParam.Name = "btnParam";
-            this.btnParam.Size = new System.Drawing.Size(97, 23);
+            this.btnParam.Size = new System.Drawing.Size(70, 23);
             this.btnParam.TabIndex = 2;
             this.btnParam.Text = "Настройки";
             this.btnParam.UseVisualStyleBackColor = true;
@@ -47,9 +49,9 @@
             // 
             // btnVpnConnect
             // 
-            this.btnVpnConnect.Location = new System.Drawing.Point(134, 39);
+            this.btnVpnConnect.Location = new System.Drawing.Point(88, 39);
             this.btnVpnConnect.Name = "btnVpnConnect";
-            this.btnVpnConnect.Size = new System.Drawing.Size(111, 23);
+            this.btnVpnConnect.Size = new System.Drawing.Size(90, 23);
             this.btnVpnConnect.TabIndex = 3;
             this.btnVpnConnect.Text = "Подключиться";
             this.btnVpnConnect.UseVisualStyleBackColor = true;
@@ -79,11 +81,33 @@
             this.prBar.TabIndex = 5;
             this.prBar.Visible = false;
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(9, 205);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(35, 23);
+            this.button1.TabIndex = 6;
+            this.button1.Text = "IP";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // btnRouteAdd
+            // 
+            this.btnRouteAdd.Location = new System.Drawing.Point(71, 205);
+            this.btnRouteAdd.Name = "btnRouteAdd";
+            this.btnRouteAdd.Size = new System.Drawing.Size(73, 23);
+            this.btnRouteAdd.TabIndex = 7;
+            this.btnRouteAdd.Text = "RouteAdd";
+            this.btnRouteAdd.UseVisualStyleBackColor = true;
+            this.btnRouteAdd.Click += new System.EventHandler(this.btnRouteAdd_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(363, 211);
+            this.ClientSize = new System.Drawing.Size(363, 234);
+            this.Controls.Add(this.btnRouteAdd);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.prBar);
             this.Controls.Add(this.rtxtLog);
             this.Controls.Add(this.cmbItems);
@@ -102,6 +126,8 @@
         private System.Windows.Forms.ComboBox cmbItems;
         private System.Windows.Forms.RichTextBox rtxtLog;
         private System.Windows.Forms.ProgressBar prBar;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btnRouteAdd;
     }
 }
 

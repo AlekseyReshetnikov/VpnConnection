@@ -38,6 +38,8 @@
             this.txtVpnUser = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.txtVpnMask = new System.Windows.Forms.TextBox();
+            this.txtRouteAdd = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // txtPwd
@@ -125,13 +127,31 @@
             this.txtVpnMask.Size = new System.Drawing.Size(169, 20);
             this.txtVpnMask.TabIndex = 5;
             // 
+            // txtRouteAdd
+            // 
+            this.txtRouteAdd.Location = new System.Drawing.Point(196, 145);
+            this.txtRouteAdd.Name = "txtRouteAdd";
+            this.txtRouteAdd.Size = new System.Drawing.Size(169, 20);
+            this.txtRouteAdd.TabIndex = 13;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(73, 145);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(55, 13);
+            this.label5.TabIndex = 14;
+            this.label5.Text = "RouteAdd";
+            // 
             // FormParam
             // 
             this.AcceptButton = this.btnOk;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.button2;
-            this.ClientSize = new System.Drawing.Size(392, 204);
+            this.ClientSize = new System.Drawing.Size(392, 244);
+            this.Controls.Add(this.txtRouteAdd);
+            this.Controls.Add(this.label5);
             this.Controls.Add(this.txtVpnMask);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.txtVpnUser);
@@ -161,5 +181,7 @@
         public System.Windows.Forms.TextBox txtVpnUser;
         private System.Windows.Forms.Label label4;
         public System.Windows.Forms.TextBox txtVpnMask;
+        public System.Windows.Forms.TextBox txtRouteAdd;
+        private System.Windows.Forms.Label label5;
     }
 }
